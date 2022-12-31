@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import s from "./Todo.module.css";
 
 const Todo = () => {
@@ -12,6 +12,7 @@ const Todo = () => {
 
   const clearAll = () => {
     setNewNote([]);
+    setInputData("");
     setEmptyMsg(true);
   };
 
@@ -52,11 +53,29 @@ const Todo = () => {
     let newEditNote = newNote.filter((elem) => {
       return elem.id === id;
     });
-    console.log(newEditNote);
     setToggleEditBtn(false);
     setInputData(newEditNote.name);
     setEdittedNote(id);
   };
+
+  const useOnEnterKey = (callback, targetkey) => {
+    useEffect(() => {
+      document.addEventListener("keydown", onEnterKey);
+      return () => {
+        document.removeEventListener("keydown", onEnterKey);
+      };
+    },[callback, targetkey]);
+
+    const onEnterKey = (e) => {
+      if (e.key === targetkey) {
+        callback();
+      }
+    };
+  };
+
+  useOnEnterKey(addBtn,'Enter');
+  useOnEnterKey(() => setInputData(''),'Delete');
+  useOnEnterKey(clearAll,'Tab');
 
   return (
     <div className={s.container}>
